@@ -28,6 +28,23 @@ class EntryPayload(BaseModel):
     remark: str | None = None
 
 
+class BatchDispatchPayload(BaseModel):
+    """批量下发拍摄通告：一次提交多个拍摄日，逐条生成通告单。
+
+    batch_key 由客户端在同一批数据的生命周期内保持不变，重复提交时服务端
+    直接返回首次结果，不会重复创建通告单。
+    """
+
+    batch_key: str | None = None
+    items: list[dict[str, Any]] = Field(default_factory=list)
+
+
+class BatchRetryPayload(BaseModel):
+    """重试批次内失败的通告：按拍摄日编号携带需要修正的字段。"""
+
+    items: list[dict[str, Any]] = Field(default_factory=list)
+
+
 
 class ScriptEntry(BaseModel):
     """剧本明细结构。"""
