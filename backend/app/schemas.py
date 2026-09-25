@@ -28,6 +28,42 @@ class EntryPayload(BaseModel):
     remark: str | None = None
 
 
+class BatchDispatchPayload(BaseModel):
+    """批量下发表：items 按拍摄日逐条给出，batch_no 用于幂等重提与按批次回看。"""
+
+    batch_no: str | None = None
+    items: list[dict[str, Any]] = Field(default_factory=list)
+    remark: str | None = None
+
+
+class BatchItemResult(BaseModel):
+    """批次内单条通告的下发结果：成功带通告编号，失败带可读原因与原始提交。"""
+
+    ok: bool
+    client_key: str
+    拍摄日编号: str | None = None
+    拍摄日期: str | None = None
+    集合时间: str | None = None
+    拍摄地点: str | None = None
+    出勤人员: str | None = None
+    message: str
+    entry_id: int | None = None
+    通告编号: str | None = None
+    submitted: dict[str, Any] = Field(default_factory=dict)
+
+
+class BatchDispatchResult(BaseModel):
+    """整组下发结果：成功与失败分列，支持只重试失败项。"""
+
+    batch_no: str
+    total: int
+    success_count: int
+    failure_count: int
+    created_at: str | None = None
+    results: list[BatchItemResult]
+    message: str | None = None
+
+
 
 class ScriptEntry(BaseModel):
     """剧本明细结构。"""
